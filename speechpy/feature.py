@@ -151,8 +151,7 @@ def lmfe(signal, sampling_frequency, frame_length=0.020, frame_stride=0.01,
          high_frequency (float): highest band edge of mel filters. In Hz, default is samplerate/2
 
     Returns:
-              array: Features - The energy of fiterbank: num_frames x num_filters
-               frame_log_energies. The log energy of each frame: num_frames x 1
+              array: Features - The log compressed energy of fiterbank: num_frames x num_filters
     """
 
     feature, frame_energies = mfe(signal, sampling_frequency=sampling_frequency, frame_length=frame_length,
@@ -160,6 +159,34 @@ def lmfe(signal, sampling_frequency, frame_length=0.020, frame_stride=0.01,
                                  num_filters=num_filters, fft_length=fft_length, low_frequency=low_frequency,
                                  high_frequency=high_frequency)
     feature = np.log(feature)
+
+
+    return feature
+
+def crmfe(signal, sampling_frequency, frame_length=0.020, frame_stride=0.01,
+             num_filters=40, fft_length=512, low_frequency=0, high_frequency=None):
+    """Compute cubic-root Mel-filterbank energy features from an audio signal.
+
+
+    Args:
+         signal (array): the audio signal from which to compute features. Should be an N x 1 array
+         sampling_frequency (int): the sampling frequency of the signal we are working with.
+         frame_length (float): the length of each frame in seconds. Default is 0.020s
+         frame_stride (float): the step between successive frames in seconds. Default is 0.02s (means no overlap)
+         num_filters (int): the number of filters in the filterbank, default 40.
+         fft_length (int): number of FFT points. Default is 512.
+         low_frequency (float): lowest band edge of mel filters. In Hz, default is 0.
+         high_frequency (float): highest band edge of mel filters. In Hz, default is samplerate/2
+
+    Returns:
+              array: Features - The cubic root compressed energy of fiterbank: num_frames x num_filters
+    """
+
+    feature, frame_energies = mfe(signal, sampling_frequency=sampling_frequency, frame_length=frame_length,
+                                 frame_stride=frame_stride,
+                                 num_filters=num_filters, fft_length=fft_length, low_frequency=low_frequency,
+                                 high_frequency=high_frequency)
+    feature = np.cbrt(feature)
 
 
     return feature
